@@ -110,14 +110,14 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '3306',
     },
-    'seconddb': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ams',
-        'USER': 'nagendra',
-        'PASSWORD': '2338',
-        'HOST': '127.0.0.1',
-        'PORT': '8111',
-    }
+    # 'seconddb': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'ams',
+    #     'USER': 'nagendra',
+    #     'PASSWORD': '2338',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '8111',
+    # }
 }
 
 
