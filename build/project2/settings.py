@@ -25,14 +25,13 @@ SECRET_KEY = 'django-insecure-9xg(@ps9x%s=+zvn6!or0cfog(j&2bmpp68j+dhxvnmu!$89&1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["15.206.109.249","localhost"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'ams',
-    'sslserver',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -98,18 +97,18 @@ WSGI_APPLICATION = 'project2.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # },
-   'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django',
-        'USER': 'nagendra',
-        'PASSWORD': '2338',
-        'HOST': '127.0.0.1',
-        'PORT': '8111',
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     },
+   # 'default': {
+   #      'ENGINE': 'django.db.backends.mysql',
+   #      'NAME': 'django',
+   #      'USER': 'nagendra',
+   #      'PASSWORD': '2338',
+   #      'HOST': '127.0.0.1',
+   #      'PORT': '8111',
+   #  },
     'seconddb': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ams',
