@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["15.206.109.249","localhost"]
 
 INSTALLED_APPS = [
     'ams',
+    'sslserver',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
