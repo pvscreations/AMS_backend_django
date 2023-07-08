@@ -98,26 +98,26 @@ WSGI_APPLICATION = 'project2.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # },
-   'default': {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
+   # 'default': {
+   #      'ENGINE': 'django.db.backends.mysql',
+   #      'NAME': 'ams',
+   #      'USER': 'root',
+   #      'PASSWORD': 'Nagendra2338',
+   #      'HOST': '127.0.0.1',
+   #      'PORT': '3306',
+   #  },
+    'seconddb': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ams',
         'USER': 'root',
         'PASSWORD': 'Nagendra2338',
         'HOST': '127.0.0.1',
         'PORT': '3306',
-    },
-    # 'seconddb': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'ams',
-    #     'USER': 'nagendra',
-    #     'PASSWORD': '2338',
-    #     'HOST': '127.0.0.1',
-    #     'PORT': '8111',
-    # }
+    }
 }
 
 
