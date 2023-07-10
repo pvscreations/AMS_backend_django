@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-9xg(@ps9x%s=+zvn6!or0cfog(j&2bmpp68j+dhxvnmu!$89&1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["15.206.109.249","ec2-15-206-109-249.ap-south-1.compute.amazonaws.com","rguktnattendance.com","localhost"]
+ALLOWED_HOSTS = ["127.0.0.1","15.206.109.249","ec2-15-206-109-249.ap-south-1.compute.amazonaws.com","rguktnattendance.com","localhost"]
 
 
 # Application definition
@@ -113,10 +113,10 @@ DATABASES = {
     'seconddb': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ams',
-        'USER': 'root',
-        'PASSWORD': 'Nagendra2338',
+        'USER': 'nagendra',
+        'PASSWORD': '2338',
         'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'PORT': '8111',
     }
 }
 

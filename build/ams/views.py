@@ -121,6 +121,7 @@ def identify(request):
                 if(len(cur.fetchall())==0):
                     print(f"insert into {table}('date,'{col[0:-1]}) values('{date}','{q[0:-1]}) ")
                     cur.execute(f"insert into {table}(date,{col[0:-1]}) values('{date}',{q[0:-1]}) ")
+
                 else:
                     print(f"update {table} set {q2[0:-1]} where date='{date}' ")
                     cur.execute(f"update {table} set {q2[0:-1]} where date='{date}'")
@@ -239,11 +240,12 @@ def Verify(req):
                 print(client)
                 results = face_recognition.compare_faces(known_faces[client], face_encoding, TOLERANCE)
                 per=0
-                print("hi")
+                
                 if (len(results)!=0):
                     per=results.count(True)/len(results)
                 else:
-                    print("sme")
+                    return JsonResponse({"verification":0})
+
                 if (per>=0.5):
                     ver=1
                     return JsonResponse({"verification":1})
@@ -281,14 +283,14 @@ def newreg(req):
                 md=data["data"]
                 ID=md["user"].upper()
                 strg=md["class"]+md["branch"]+md["section"]+".json"
-
                 with open("./models/"+strg,"r+") as x:
                     model=json.load(x)
-                    global it
+                    it=int(data["tt"])
+                    print(it)
                     image = face_recognition.load_image_file(IMAGE)
 
                     if (it==0):
-
+                        print("test2")
                         known=list(model["known_faces"].keys())
                         if(md["user"]) not in known:
                             size = os.path.getsize("./models/"+strg)
@@ -301,6 +303,9 @@ def newreg(req):
                             if(len(encoding)==1):
                                 dat='"'+ID+'"'+":"+str([encoding[0].tolist()])
                                 t=","+dat+"}}"
+                                table=md["class"]+md["branch"]+md["section"]
+                                excelnewreg(table,md["user"])
+                                
                                 
                                 os.mkdir(os.path.join("pictures",md["class"],md["branch"],md["section"],md["user"]))
                                 now = str(datetime.now()).replace(':', '_')
@@ -309,13 +314,14 @@ def newreg(req):
                                 cur=connections["seconddb"].cursor()
                                 table=md["class"]+md["branch"]+md["section"]
                                 cur.execute(f"alter table {table} add column {md['user']} int(1) default 0 ")
+                                
                                 it+=1
                                 return JsonResponse({"message":1})
                             else:
                                 return JsonResponse({"message":"images>1/0 found"})
                         else:
                             return JsonResponse({"message":"already exists"})
-                    elif(it<4):
+                    elif(it<5):
                         if max(image.shape) > 1600:
                             pil_img = Image.fromarray(image)
                             pil_img.thumbnail((1600, 1600), Image.LANCZOS)
@@ -331,8 +337,10 @@ def newreg(req):
                             return JsonResponse({"message":1,"it":it})                    
                         else:
                             return JsonResponse({"message":"images>1/0 found","it":it})
-                    elif(it==4):
-                        return JsonResponse({"message":1,"it":4})    
+                    elif(it==5):
+                        return JsonResponse({"message":1,"it":5})
+                    else:
+                        return JsonResponse({"message":1,"it":6})    
             else:
                 return JsonResponse({"message":"no face found"})
     except Exception as e:
@@ -379,3 +387,47 @@ def update(req):
                     return JsonResponse({"message":"Try new Registrations"})
         else:
             return JsonResponse({"message":"no face found"})
+
+
+def excelnewreg(worksheet_name,user):
+        print("test1")
+        import datetime
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        SERVICE_ACCOUNT_FILE = './service.json'
+        
+        credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
+        service_sheets = build('sheets', 'v4', credentials=credentials)
+        GOOGLE_SHEETS_ID = '1TkXFVCGrrMMkLE1y5z4fMJ9JkOYT7PRRYThYN_imBfY'
+        
+
+        cell_ranges = [
+            'A1:A',
+            'A1:1'
+        ]
+
+        ranges = [worksheet_name + '!' + cell_range for cell_range in cell_ranges]
+
+        response = service_sheets.spreadsheets().values().batchGet(
+            spreadsheetId=GOOGLE_SHEETS_ID,
+            ranges=ranges
+        ).execute()
+        print("hello mawsboro")
+        dates=response["valueRanges"][0]["values"][1:]
+        ids=response["valueRanges"][1]["values"][0]
+        
+
+        columns=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE","AF",
+        "AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ","BA"]
+        ranges=columns[len(ids)]+str(1)
+        body1={
+        'values':[[user]]
+        }        
+        range = service_sheets.spreadsheets().values().update(
+            spreadsheetId=GOOGLE_SHEETS_ID,
+            range=worksheet_name + '!' + ranges,
+            valueInputOption='RAW',
+            body=body1
+        ).execute()
+        
+
