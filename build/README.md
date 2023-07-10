@@ -1,1 +1,1 @@
-# MINOR
+# MINOR PROJECT
