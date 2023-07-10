@@ -114,10 +114,10 @@ DATABASES = {
     'seconddb': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ams',
-        'USER': 'nagendra',
-        'PASSWORD': '2338',
+        'USER': 'root',
+        'PASSWORD': 'Nagendra2338',
         'HOST': '127.0.0.1',
-        'PORT': '8111',
+        'PORT': '3306',
     }
 }
 
