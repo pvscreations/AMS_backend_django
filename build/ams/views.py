@@ -15,10 +15,10 @@ from django.db import connections
 from datetime import datetime
 import os
 from django.template import loader
-g=set()
-client=str()
-ver=int()
-it=int()
+# g=set()
+# client=str()
+# ver=int()
+# it=int()
 @csrf_exempt
 def home(request):
     template=loader.get_template('index.html')
@@ -91,26 +91,24 @@ def identify(request):
                 if (match==None):
                     draw.rectangle(((left, top), (right, bottom)), outline='red', width=2)
                     draw.text((left+6, top-20), "unknown", font=FONT, fill='red')
-            global g
-            idb=list(findings.difference(g))
-            g.update(findings)
-            client=list(total.difference(g))          
+          
+            
+            idb=findings
+            
             date=datetime.now().strftime("%Y%m%d")
             col=""
             q=""
             q2=""
-            print(len(findings),"",len(total),"",len(g))
-
-            print("idb is",idb)
+            # print(len(findings),"",len(total),"",len(g))
+            
             if (len(idb)>=1):
                 for i in idb:
                     print(i)
                     col+=f"{i},"
                     q+=f"'1',"
                     q2+=f"{i}='1',"
-                print("query is "+q2+"\n"+col)
-                print(client)
                 del draw
+                print("hello",col,"\n",q,"\n",q2)
                 buffer = io.BytesIO()
                 pil_image.save(buffer, format='JPEG')
                 reply = base64.b64encode(buffer.getvalue())
@@ -120,70 +118,22 @@ def identify(request):
                 cur.execute(f"select date from {table} where date={date}")
                 if(len(cur.fetchall())==0):
                     print(f"insert into {table}('date,'{col[0:-1]}) values('{date}','{q[0:-1]}) ")
+                    dateInsertion(table,date)
                     cur.execute(f"insert into {table}(date,{col[0:-1]}) values('{date}',{q[0:-1]}) ")
-
+                    Attendance(table,idb,date)
                 else:
                     print(f"update {table} set {q2[0:-1]} where date='{date}' ")
                     cur.execute(f"update {table} set {q2[0:-1]} where date='{date}'")
-
-#             if (strg=="E1csecse1.json"):
-#                 db=Attendance(date=datetime.now().strftime("%Y%m%d"),N181022=data["N181022"],N180924=data["N180924"],N180825=data["N180825"],N180789=data["N180789"],N170976=data["N170976"])
-#                 db.save()
-#             elif(strg=="E2csecse2.json"):
-#                 db=e2csecse2(date=datetime.now().strftime("%Y%m%d"),N200037= data["N200037"],
-#  N200377= data["N200377"],
-#  N200381= data["N200381"],
-#  N200392= data["N200392"],
-#  N200491= data["N200491"],
-#  N200517= data["N200517"],
-#  N200539= data["N200539"],
-#  N200542= data["N200542"],
-#  N200572= data["N200572"],
-#  N200575= data["N200575"],
-#  N200594= data["N200594"],
-#  N200680= data["N200680"],
-#  N200689= data["N200689"],
-#  N200695= data["N200695"],
-#  N200745= data["N200745"],
-#  N200770= data["N200770"],
-#  N200814= data["N200814"],
-#  N200829= data["N200829"],
-#  N200841= data["N200841"],
-#  N200883= data["N200883"],
-#  N200910= data["N200910"],
-#  N200947= data["N200947"],
-#  N200948= data["N200948"],
-#  N200957= data["N200957"],
-#  N201006= data["N201006"],
-#  N201014= data["N201014"],
-#  N201045= data["N201045"],
-#  N201050= data["N201050"],
-#  N201056= data["N201056"],
-#  N201064= data["N201064"],
-#  N201070= data["N201070"])
-#                 db.save()
-                return JsonResponse({"image":"data:image/jpeg;base64,"+reply.decode("utf-8"),"findings":list(g)})
+                    # print(table)
+                    Attendance(table,idb,date)
+                    print("hi")
+                return JsonResponse({"image":"data:image/jpeg;base64,"+reply.decode("utf-8"),"findings":list(idb)})
             else:
                 return JsonResponse({"image":0})
 
         else:
             return JsonResponse({"prompt":"not a correct image"})
-    # if request.method == 'POST':
-    #     data=json.loads(request.body)
-    #     image_data =data["image_data"]
-    #     if image_data:
-    #         # decode the base64 encoded image data
-    #         image_data = base64.b64decode(image_data.split(',')[1])
-            
-    #         # open the image using PIL
-    #         img = Image.open(BytesIO(image_data))
-            
-    #         # display the image in the console
-    #         img.show()
-
-    #         return JsonResponse({'message': 'Image displayed successfully.'})
-    # return JsonResponse({'error': 'No image data found.'})
-
+   
 @csrf_exempt
 def Login(request):
     global client
@@ -207,9 +157,7 @@ def Login(request):
         return JsonResponse({"Login":"failure"})
 @csrf_exempt
 def Verify(req):
-  global g
-  global ver
-  g.clear()
+
   try:
     if req.method == 'POST':
         data=json.loads(req.body)
@@ -261,7 +209,7 @@ def Verify(req):
     else:
          return JsonResponse({"verification":0})
   except Exception as e:
-    print("error is ",e)
+    return JsonResponse({"verification":0})
 
 @csrf_exempt
 def newreg(req):
@@ -283,8 +231,12 @@ def newreg(req):
                 md=data["data"]
                 ID=md["user"].upper()
                 strg=md["class"]+md["branch"]+md["section"]+".json"
+                print(strg)
                 with open("./models/"+strg,"r+") as x:
+                    
+                    
                     model=json.load(x)
+                    print("heee")
                     it=int(data["tt"])
                     print(it)
                     image = face_recognition.load_image_file(IMAGE)
@@ -292,7 +244,9 @@ def newreg(req):
                     if (it==0):
                         print("test2")
                         known=list(model["known_faces"].keys())
+                        
                         if(md["user"]) not in known:
+                            print("hellow")
                             size = os.path.getsize("./models/"+strg)
                             x.seek(size-2,0) 
                             if max(image.shape) > 1600:
@@ -429,5 +383,77 @@ def excelnewreg(worksheet_name,user):
             valueInputOption='RAW',
             body=body1
         ).execute()
-        
+def Attendance(worksheet_name,users,today):
+    import datetime
+    from google.oauth2 import service_account
+    from googleapiclient.discovery import build
 
+    SERVICE_ACCOUNT_FILE = './service.json'
+    credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
+    service_sheets = build('sheets', 'v4', credentials=credentials)
+
+    GOOGLE_SHEETS_ID = '1TkXFVCGrrMMkLE1y5z4fMJ9JkOYT7PRRYThYN_imBfY'
+
+    cell_ranges = [
+        'A1:A',
+        'B1:1'
+    ]
+    print(worksheet_name)
+    ranges = [worksheet_name + '!' + cell_range for cell_range in cell_ranges]
+
+    response = service_sheets.spreadsheets().values().batchGet(
+        spreadsheetId=GOOGLE_SHEETS_ID,
+        ranges=ranges
+    ).execute()
+    dates=response["valueRanges"][0]["values"][1:]
+    ids=response["valueRanges"][1]["values"][0]
+    
+    date=[today]
+    value_range={"data":[],'valueInputOption': 'RAW'}
+    for i in users:
+        idi=ids.index(i)+1
+        ddi=dates.index(date)+2
+        columns=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE","AF"
+        "AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ","BA"]
+        value_range["data"].append({'range':worksheet_name+"!"+columns[idi]+str(ddi),'values':[['1']]})
+    response = service_sheets.spreadsheets().values().batchUpdate(
+        spreadsheetId=GOOGLE_SHEETS_ID,
+        body=value_range,
+    ).execute()
+    print(response) 
+def dateInsertion(worksheet_name,date):
+    import datetime
+    from google.oauth2 import service_account
+    from googleapiclient.discovery import build
+
+    SERVICE_ACCOUNT_FILE = './service.json'
+    credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
+    service_sheets = build('sheets', 'v4', credentials=credentials)
+
+    GOOGLE_SHEETS_ID = '1TkXFVCGrrMMkLE1y5z4fMJ9JkOYT7PRRYThYN_imBfY'
+    
+
+    cell_ranges = [
+        'A1:A',
+        'B1:1'
+    ]
+
+    ranges = [worksheet_name + '!' + cell_range for cell_range in cell_ranges]
+
+    response = service_sheets.spreadsheets().values().batchGet(
+        spreadsheetId=GOOGLE_SHEETS_ID,
+        ranges=ranges
+    ).execute()
+    dates=response["valueRanges"][0]["values"][1:]
+    ids=response["valueRanges"][1]["values"][0]
+    ranges="A"+str(len(dates)+2)
+    
+    body1={
+        'values':[[date]]
+    }
+    range = service_sheets.spreadsheets().values().update(
+        spreadsheetId=GOOGLE_SHEETS_ID,
+        range=worksheet_name + '!' + ranges,
+        valueInputOption='RAW',
+        body=body1
+    ).execute()
