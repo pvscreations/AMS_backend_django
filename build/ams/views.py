@@ -258,7 +258,6 @@ def newreg(req):
                                 dat='"'+ID+'"'+":"+str([encoding[0].tolist()])
                                 t=","+dat+"}}"
                                 table=md["class"]+md["branch"]+md["section"]
-                                excelnewreg(table,md["user"])
                                 
                                 
                                 os.mkdir(os.path.join("pictures",md["class"],md["branch"],md["section"],md["user"]))
@@ -266,9 +265,11 @@ def newreg(req):
                                 Image.fromarray(image).save(os.path.join("pictures",md["class"],md["branch"],md["section"],md["user"],now)+".png")
                                 x.write(t)
                                 cur=connections["seconddb"].cursor()
+                                
+
                                 table=md["class"]+md["branch"]+md["section"]
                                 cur.execute(f"alter table {table} add column {md['user']} int(1) default 0 ")
-                                
+                                excelnewreg(table,md["user"])
                                 it+=1
                                 return JsonResponse({"message":1})
                             else:
