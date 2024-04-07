@@ -80,3 +80,10 @@ maintaining pen-paper records. </p>
   
   
 </p>
+<h1>References</h1>
+Know More About The AMS 
+<ul>
+<li><a href="https://drive.google.com/file/d/19H9eQcFepn7br-3Xrph3rZdQvUhv4VoS/view?usp=drivesdk">Documentation (Technical Details)</a></li>
+<li><a href="https://drive.google.com/file/d/1edLgPpHAH3xXXX-mTyO3mEtW9MHnhsft/view">Video (Promo)</a></li>
+</ul>
+
